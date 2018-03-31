@@ -15,5 +15,6 @@
   },
   "dependencies": {
     "husky": "^0.14.3"
-  }
+  },
+  "bugs": "https://github.com/damonmaria/auto-sync-deps/issues"
 }
