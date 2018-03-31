@@ -1,0 +1,19 @@
+{
+  "name": "auto-sync-deps",
+  "version": "1.0.0",
+  "license": "MIT",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:damonmaria/auto-sync-deps.git"
+  },
+  "scripts": {
+    "postinstall": "./bin/sync-deps.sh"
+  },
+  "bin": {
+    "sync-deps": "bin/sync-deps.sh"
+  },
+  "dependencies": {
+    "husky": "^0.14.3"
+  }
+}
