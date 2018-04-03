@@ -43,7 +43,7 @@ You can also force a manual update of all package trees with `yarn sync-deps`
 
 ## Possible improvements
 
-- Make it work with npm's `package-lock.json` and know which it
-    should use
+- Make it work with npm's `package-lock.json` (could know to use `yarn`
+    or `npm` based off `npm_config_user_agent` env var)
 - Automatically install the husky git hooks, although it would have
     to leave the ability for you to add your own hooks still
