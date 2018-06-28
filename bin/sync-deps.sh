@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 
-if [[ $(basename $(cd .. && pwd)) != "node_modules" ]]; then
-	# Don't run unless installed as a dependency
-	exit 0
+if [[ ${npm_lifecycle_event} == "postinstall" ]]; then
+	if [[ $(basename $(cd .. && pwd)) != "node_modules" ]]; then
+		# Don't run as a postinstall script unless installed as a dependency
+		exit 0
+	fi
+	# Capture this before we cd below
+	INSTALLED_IN_PKG_DIR=$(cd .. && npm prefix)  # Can't see how else to figure out where is the package.json we're installed into
 fi
-
-INSTALLED_IN_PKG_DIR=$(cd .. && npm prefix)  # Can't see how else to figure out where is the package.json we're installed into
 
 cd $(git rev-parse --show-toplevel)  # Run everything from the root of the git tree to match what we store in GIT_PATHS
 
