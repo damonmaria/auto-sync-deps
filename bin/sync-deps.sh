@@ -1,21 +1,26 @@
 #!/usr/bin/env bash
 
+if [[ $(basename $(cd .. && pwd)) != "node_modules" ]]; then
+	# Don't run unless installed as a dependency
+	exit 0
+fi
+
 INSTALLED_IN_PKG_DIR=$(cd .. && npm prefix)  # Can't see how else to figure out where is the package.json we're installed into
 
 cd $(git rev-parse --show-toplevel)  # Run everything from the root of the git tree to match what we store in GIT_PATHS
 
-if [[ ${GIT_PARAMS+foo} ]]; then  # https://stackoverflow.com/questions/3601515/how-to-check-if-a-variable-is-set-in-bash
+if [[ ${HUSKY_GIT_PARAMS+foo} ]]; then  # https://stackoverflow.com/questions/3601515/how-to-check-if-a-variable-is-set-in-bash
     # GIT_PARAMS exists therefore called by husky git hook
-	GIT_PARAMS=(${GIT_PARAMS})  # Turn into array
-	if [[ ${GIT_PARAMS[1]} ]]; then
+	HUSKY_GIT_PARAMS=(${HUSKY_GIT_PARAMS})  # Turn into array
+	if [[ ${HUSKY_GIT_PARAMS[1]} ]]; then
 		# post-checkout hook
-		GIT_PARAMS=(${GIT_PARAMS[@]:0:2})  # Drop the flag param if any
+		GIT_COMPARE_PATHS=(${HUSKY_GIT_PARAMS[@]:0:2})  # Drop the flag param if any
 	else
 		# post-merge hook
-		GIT_PARAMS=(ORIG_HEAD HEAD)
+		GIT_COMPARE_PATHS=(ORIG_HEAD HEAD)
 	fi
     SELECTIVE_UPDATE=true
-	GIT_PATHS=$(git diff-tree -r --name-only --no-commit-id ${GIT_PARAMS[@]})
+	GIT_PATHS=$(git diff-tree -r --name-only --no-commit-id ${GIT_COMPARE_PATHS[@]})
 else
 	# Sync everything
 	GIT_PATHS=$(git ls-tree --full-tree -r --name-only HEAD)
