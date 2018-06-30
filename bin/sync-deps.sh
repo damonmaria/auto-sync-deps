@@ -32,7 +32,9 @@ else
 	fi
 fi
 
-echo "${GIT_PATHS}" | grep "\(^\|/\)yarn.lock$" | while read -r LOCK_PATH ; do
+pids=()
+
+echo "${GIT_PATHS}" | grep "\(^\|/\)yarn.lock$" | while read -r LOCK_PATH; do
 	if [[ ${LOCK_PATH} == ${SKIP_LOCK_PATH} ]]; then
 		continue
 	fi
@@ -48,8 +50,14 @@ echo "${GIT_PATHS}" | grep "\(^\|/\)yarn.lock$" | while read -r LOCK_PATH ; do
 	fi
 	if [ -e "${PKG_DIR}/.meteor" ]; then
 		# Due to binary compilation differences, meteor projects need to use it's exact node version
-		PATH=$(dirname $(meteor node -e "process.stdout.write(process.execPath)")):$PATH yarn --cwd "${PKG_DIR}"
+		PATH=$(dirname $(meteor node -e "process.stdout.write(process.execPath)")):$PATH yarn --cwd "${PKG_DIR}" &
 	else
-		yarn --cwd "${PKG_DIR}"
+		yarn --cwd "${PKG_DIR}" &
 	fi
+	pids+=($!)
+done
+
+# wait for all yarns to finish
+for pid in ${pids[@]}; do
+    wait ${pid}
 done
