@@ -7,9 +7,6 @@
     "type": "git",
     "url": "git@github.com:damonmaria/auto-sync-deps.git"
   },
-  "scripts": {
-    "postinstall": "./bin/sync-deps.sh"
-  },
   "bin": {
     "sync-deps": "bin/sync-deps.sh"
   },

@@ -5,6 +5,7 @@
       <set>
         <option value="GIT_PARAMS" />
         <option value="HUSKY_GIT_PARAMS" />
+        <option value="SYNCING_DEPS" />
         <option value="npm_lifecycle_event" />
       </set>
     </option>
