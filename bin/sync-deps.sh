@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+YARN_ARGS="--frozen-lockfile --non-interactive --silent"
+
 if [[ ${npm_lifecycle_event} == "postinstall" ]]; then
 	if [[ $(basename $(cd .. && pwd)) != "node_modules" ]]; then
 		# Don't run as a postinstall script unless installed as a dependency
@@ -46,12 +48,11 @@ echo "${GIT_PATHS}" | grep "\(^\|/\)yarn.lock$" | while read -r LOCK_PATH; do
 			echo Installing ${PKG_DIR} packages
 		fi
 	fi
-	YARN_ARGS="--cwd \"${PKG_DIR}\"  --frozen-lockfile  --non-interactive --silent"
 	if [ -e "${PKG_DIR}/.meteor" ]; then
 		# Due to binary compilation differences, meteor projects need to use its exact node version
 		METEOR_NODE=$(cd ${PKG_DIR} && meteor node -e "process.stdout.write(process.execPath)")
-		PATH=$(dirname ${METEOR_NODE}):$PATH yarn install ${YARN_ARGS}
+		PATH=$(dirname ${METEOR_NODE}):$PATH yarn install --cwd "${PKG_DIR}" ${YARN_ARGS}
 	else
-		yarn install ${YARN_ARGS}
+		yarn install --cwd "${PKG_DIR}" ${YARN_ARGS}
 	fi
 done
