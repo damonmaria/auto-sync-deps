@@ -12,7 +12,7 @@ fi
 cd $(git rev-parse --show-toplevel)  # Run everything from the root of the git tree to match what we store in GIT_PATHS
 
 if [[ ${HUSKY_GIT_PARAMS+foo} ]]; then  # https://stackoverflow.com/questions/3601515/how-to-check-if-a-variable-is-set-in-bash
-    # GIT_PARAMS exists therefore called by husky git hook
+    # HUSKY_GIT_PARAMS exists therefore called by husky git hook
 	HUSKY_GIT_PARAMS=(${HUSKY_GIT_PARAMS})  # Turn into array
 	if [[ ${HUSKY_GIT_PARAMS[1]} ]]; then
 		# post-checkout hook
@@ -27,12 +27,10 @@ else
 	# Sync everything
 	GIT_PATHS=$(git ls-tree --full-tree -r --name-only HEAD)
 	if [[ ${npm_lifecycle_event} == "postinstall" ]]; then
-		# Don't try and install the package tree that we're already in the middle of installing
+		# Don't try and install the package file that we're already in the middle of installing
 		SKIP_LOCK_PATH=$(git ls-tree --full-name --name-only HEAD "${INSTALLED_IN_PKG_DIR}/yarn.lock")  # So path is same format that we need to match to
 	fi
 fi
-
-pids=()
 
 echo "${GIT_PATHS}" | grep "\(^\|/\)yarn.lock$" | while read -r LOCK_PATH; do
 	if [[ ${LOCK_PATH} == ${SKIP_LOCK_PATH} ]]; then
@@ -48,16 +46,12 @@ echo "${GIT_PATHS}" | grep "\(^\|/\)yarn.lock$" | while read -r LOCK_PATH; do
 			echo Installing ${PKG_DIR} packages
 		fi
 	fi
+	YARN_ARGS="--cwd \"${PKG_DIR}\"  --frozen-lockfile  --non-interactive"
 	if [ -e "${PKG_DIR}/.meteor" ]; then
-		# Due to binary compilation differences, meteor projects need to use it's exact node version
-		PATH=$(dirname $(meteor node -e "process.stdout.write(process.execPath)")):$PATH yarn --cwd "${PKG_DIR}" &
+		# Due to binary compilation differences, meteor projects need to use its exact node version
+		METEOR_NODE=$(cd ${PKG_DIR} && meteor node -e "process.stdout.write(process.execPath)")
+		PATH=$(dirname ${METEOR_NODE}):$PATH yarn install ${YARN_ARGS}
 	else
-		yarn --cwd "${PKG_DIR}" &
+		yarn install ${YARN_ARGS}
 	fi
-	pids+=($!)
-done
-
-# wait for all yarns to finish
-for pid in ${pids[@]}; do
-    wait ${pid}
 done
