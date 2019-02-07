@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-INSTALL_ARGS="--frozen-lockfile --non-interactive --silent"
+INSTALL_ARGS="--frozen-lockfile --non-interactive --silent --ignore-engines"
 
 cd $(git rev-parse --show-toplevel)  # Run everything from the root of the git tree to match what we store in GIT_PATHS
 
@@ -33,7 +33,7 @@ echo "${GIT_PATHS}" | grep "\(^\|/\)yarn.lock$" | while read -r LOCK_PATH; do
 			echo Installing ${PKG_DIR} packages
 		fi
 	fi
-	if [ -e "${PKG_DIR}/.meteor" ]; then
+	if [[ -e "${PKG_DIR}/.meteor" ]]; then
 		# Due to binary compilation differences, meteor projects need to use its exact node version
 		METEOR_NODE=$(cd ${PKG_DIR} && meteor node -e "process.stdout.write(process.execPath)")
 		PATH=$(dirname ${METEOR_NODE}):$PATH SYNCING_DEPS=1 yarn install --cwd "${PKG_DIR}" ${INSTALL_ARGS}
