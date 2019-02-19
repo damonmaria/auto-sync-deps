@@ -8,11 +8,12 @@ changes.
 1. `yarn add --dev auto-sync-deps`
 2. Edit `package.json` and add the following to the top level:
 
-```js
+```json
   "husky": {
     "hooks": {
       "post-checkout": "yarn sync-deps",
-      "post-merge": "yarn sync-deps"
+      "post-merge": "yarn sync-deps",
+      "post-rewrite": "yarn sync-deps"
     }
   }
 ```

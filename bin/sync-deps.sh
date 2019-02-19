@@ -8,12 +8,19 @@ if [[ ${HUSKY_GIT_PARAMS+foo} ]]; then  # https://stackoverflow.com/questions/36
     # HUSKY_GIT_PARAMS exists therefore called by husky git hook
 	HUSKY_GIT_PARAMS=(${HUSKY_GIT_PARAMS})  # Turn into array
 	if [[ ${HUSKY_GIT_PARAMS[1]} ]]; then
-		# post-checkout hook
-		GIT_COMPARE_PATHS=(${HUSKY_GIT_PARAMS[@]:0:2})  # Drop the flag param if any
+		# post-checkout or post-rewrite hook
+		if [[ ${HUSKY_GIT_PARAMS[0]} != "rebase" && ${HUSKY_GIT_PARAMS[0]} != "amend" ]]; then
+			# post-checkout hook
+			GIT_COMPARE_PATHS=(${HUSKY_GIT_PARAMS[@]:0:2})  # Drop the flag param if any
+		fi
+			# else is post-rewrite (like from rebase), can't determine which paths to compare
 	else
 		# post-merge hook
 		GIT_COMPARE_PATHS=(ORIG_HEAD HEAD)
 	fi
+fi
+
+if [[ ${GIT_COMPARE_PATHS} ]]; then
     # Sync modified files
     SELECTIVE_UPDATE=1
 	GIT_PATHS=$(git diff-tree -r --name-only --no-commit-id ${GIT_COMPARE_PATHS[@]})
