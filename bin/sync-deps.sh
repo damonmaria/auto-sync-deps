@@ -6,14 +6,13 @@ cd $(git rev-parse --show-toplevel)  # Run everything from the root of the git t
 
 if [[ ${HUSKY_GIT_PARAMS+foo} ]]; then  # https://stackoverflow.com/questions/3601515/how-to-check-if-a-variable-is-set-in-bash
     # HUSKY_GIT_PARAMS exists therefore called by husky git hook
-	HUSKY_GIT_PARAMS=(${HUSKY_GIT_PARAMS})  # Turn into array
-	if [[ ${HUSKY_GIT_PARAMS[1]} ]]; then
-		# post-checkout or post-rewrite hook
-		if [[ ${HUSKY_GIT_PARAMS[0]} != "rebase" && ${HUSKY_GIT_PARAMS[0]} != "amend" ]]; then
-			# post-checkout hook
-			GIT_COMPARE_PATHS=(${HUSKY_GIT_PARAMS[@]:0:2})  # Drop the flag param if any
-		fi
-			# else is post-rewrite (like from rebase), can't determine which paths to compare
+	GIT_PARAMS=(${HUSKY_GIT_PARAMS})  # Turn into array
+    if [[ ${GIT_PARAMS[0]} == "rebase" || ${GIT_PARAMS[0]} == "amend" ]]; then
+        # post-rewrite hook, so check everything
+        :
+	elif [[ ${GIT_PARAMS[1]} ]]; then
+		# post-checkout hook
+        GIT_COMPARE_PATHS=(${GIT_PARAMS[@]:0:2})
 	else
 		# post-merge hook
 		GIT_COMPARE_PATHS=(ORIG_HEAD HEAD)
