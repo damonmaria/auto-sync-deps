@@ -1,12 +1,13 @@
 # auto-sync-deps
 
-Automatically keep your yarn dependencies in sync with upstream
-changes.
+Automatically keep your yarn dependencies in sync with git changes.
 
 ## Install
 
-1. `yarn add --dev auto-sync-deps`
-2. Edit `package.json` and add the following to the top level:
+1. Due to limitations in [husky](https://github.com/typicode/husky/blob/next/DOCS.md)
+   only do this with `package.json` in your git root (but auto-sync-deps will update other package trees as well)
+2. `yarn add --dev auto-sync-deps`
+3. Edit `package.json` and add the following to the top level:
 
 ```json
   "husky": {
@@ -29,14 +30,12 @@ You can also force a manual update of all package trees with `yarn sync-deps`
 
 ## What this handles
 
-- The `package.json` you install into can be anywhere in your git
-    tree, it doesn't have to be in the root
 - Multiple `package.json` package trees (but only install this package
-    in one of them)
-- Form the git hooks `yarn` is only run when the `yarn.lock` has changed
-- In a Meteor project the Meteor version of node is used to ensure binary compatibility of compiled modules 
+  in the root one)
+- Form the git hooks `yarn` is only run when that particular `yarn.lock` has changed
+- In a Meteor project the Meteor version of node is used to ensure binary compatibility of compiled modules
 
 ## Possible improvements
 
 - Make it work with npm's `package-lock.json` (could know to use `yarn`
-    or `npm` based off `npm_config_user_agent` env var)
+  or `npm` based off `npm_config_user_agent` env var)
