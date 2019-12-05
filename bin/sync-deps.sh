@@ -73,5 +73,5 @@ echo "${GIT_PATHS}" | grep "\(^\|/\)Pipfile.lock$" | while read -r LOCK_PATH; do
 			echo "Installing ${PKG_DIR} pipenv packages"
 		fi
 	fi
-  (cd "${PKG_DIR}" && pipenv sync --dev "${SYNC_ARGS[@]}")
+  (cd "${PKG_DIR}" && PIPENV_VENV_IN_PROJECT=1 pipenv sync --dev "${SYNC_ARGS[@]}")
 done
