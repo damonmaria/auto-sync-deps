@@ -22,9 +22,14 @@ if [[ ${HUSKY_GIT_PARAMS+foo} ]]; then  # https://stackoverflow.com/questions/36
 fi
 
 if [[ "${GIT_COMPARE_PATHS[*]}" ]]; then
-  # Sync modified files
-  SELECTIVE_UPDATE=1
+  # Find modified files
 	GIT_PATHS=$(git diff-tree -r --name-only --no-commit-id "${GIT_COMPARE_PATHS[@]}")
+	if [[ ${GIT_PATHS} ]]; then
+    SELECTIVE_UPDATE=1
+  else
+	  echo "No git diff-ree paths so syncing all files"
+  	GIT_PATHS=$(git ls-tree --full-tree -r --name-only HEAD)
+  fi
 else
 	# Sync all files
 	GIT_PATHS=$(git ls-tree --full-tree -r --name-only HEAD)
