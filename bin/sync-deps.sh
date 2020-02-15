@@ -52,6 +52,15 @@ done
 
 echo "${GIT_PATHS}" | grep "\(^\|/\)Pipfile.lock$" | while read -r LOCK_PATH; do
 	PKG_DIR=$(dirname "${LOCK_PATH}")
+	if [[ ${SELECTIVE_UPDATE} ]]; then
+		echo "Updating pipenv dependencies due to modifed ${LOCK_PATH}"
+	else
+		if [[ ${PKG_DIR} == "." ]]; then
+			echo "Installing root pipenv packages"
+		else
+			echo "Installing ${PKG_DIR} pipenv packages"
+		fi
+	fi
   PIPFILE_PATH=${LOCK_PATH//Pipfile.lock/Pipfile}
   PY_SHORT_VERSION=$(grep python_version "${PIPFILE_PATH}" | grep -o "[0-9.]\+")
   PY_LATEST_VERSION=$(pyenv install --list | grep "^\s\+${PY_SHORT_VERSION}\.[0-9]\+\$" | grep -o "[0-9.]\+" | tail -n1)
@@ -64,14 +73,5 @@ echo "${GIT_PATHS}" | grep "\(^\|/\)Pipfile.lock$" | while read -r LOCK_PATH; do
   else
     SYNC_ARGS=(--python "${PYENV_PYTHON}")
   fi
-	if [[ ${SELECTIVE_UPDATE} ]]; then
-		echo "Updating pipenv dependencies due to modifed ${LOCK_PATH}"
-	else
-		if [[ ${PKG_DIR} == "." ]]; then
-			echo "Installing root pipenv packages"
-		else
-			echo "Installing ${PKG_DIR} pipenv packages"
-		fi
-	fi
   (cd "${PKG_DIR}" && PIPENV_VENV_IN_PROJECT=1 pipenv sync --dev "${SYNC_ARGS[@]}")
 done
