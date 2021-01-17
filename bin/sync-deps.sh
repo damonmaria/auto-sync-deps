@@ -36,9 +36,12 @@ else
 fi
 
 echo "${GIT_PATHS}" | grep "\(^\|/\)yarn.lock$" | while read -r LOCK_PATH; do
+  if [[ ! -f "${LOCK_PATH}" ]]; then
+    continue
+  fi
 	PKG_DIR=$(dirname "${LOCK_PATH}")
 	if [[ ${SELECTIVE_UPDATE} ]]; then
-		echo "Updating yarn dependencies due to modifed ${LOCK_PATH}"
+		echo "Updating yarn dependencies due to modified ${LOCK_PATH}"
 	else
 		if [[ ${PKG_DIR} == "." ]]; then
 			echo "Installing root yarn packages"
@@ -56,6 +59,9 @@ echo "${GIT_PATHS}" | grep "\(^\|/\)yarn.lock$" | while read -r LOCK_PATH; do
 done
 
 echo "${GIT_PATHS}" | grep "\(^\|/\)Pipfile.lock$" | while read -r LOCK_PATH; do
+  if [[ ! -f "${LOCK_PATH}" ]]; then
+    continue
+  fi
 	PKG_DIR=$(dirname "${LOCK_PATH}")
 	if [[ ${SELECTIVE_UPDATE} ]]; then
 		echo "Updating pipenv dependencies due to modifed ${LOCK_PATH}"
