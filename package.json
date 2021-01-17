@@ -11,7 +11,7 @@
     "sync-deps": "bin/sync-deps.sh"
   },
   "dependencies": {
-    "husky": "^3.0.3"
+    "husky": "^4.3.8"
   },
   "bugs": "https://github.com/damonmaria/auto-sync-deps/issues"
 }
