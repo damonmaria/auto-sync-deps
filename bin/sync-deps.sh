@@ -84,5 +84,5 @@ echo "${GIT_PATHS}" | grep "\(^\|/\)Pipfile.lock$" | while read -r LOCK_PATH; do
   else
     SYNC_ARGS=(--python "${PYENV_PYTHON}")
   fi
-  (cd "${PKG_DIR}" && PIPENV_VENV_IN_PROJECT=1 pipenv sync --dev "${SYNC_ARGS[@]}")
+  (cd "${PKG_DIR}" && PIPENV_VENV_IN_PROJECT=1 PIPENV_IGNORE_VIRTUALENVS=1 pipenv sync --dev "${SYNC_ARGS[@]}")
 done
