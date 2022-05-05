@@ -64,7 +64,7 @@ echo "${GIT_PATHS}" | grep "\(^\|/\)Pipfile.lock$" | while read -r LOCK_PATH; do
   fi
 	PKG_DIR=$(dirname "${LOCK_PATH}")
 	if [[ ${SELECTIVE_UPDATE} ]]; then
-		echo "Updating pipenv dependencies due to modifed ${LOCK_PATH}"
+		echo "Updating pipenv dependencies due to modified ${LOCK_PATH}"
 	else
 		if [[ ${PKG_DIR} == "." ]]; then
 			echo "Installing root pipenv packages"

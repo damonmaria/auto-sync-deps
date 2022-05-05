@@ -3,6 +3,7 @@
     <words>
       <w>deps</w>
       <w>pids</w>
+      <w>virtualenvs</w>
     </words>
   </dictionary>
 </component>
