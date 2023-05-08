@@ -79,10 +79,14 @@ echo "${GIT_PATHS}" | grep "\(^\|/\)Pipfile.lock$" | while read -r LOCK_PATH; do
   PYENV_PYTHON="$(pyenv prefix "${PY_LATEST_VERSION}")/bin/python"
   PYENV_PY_VERSION_OUTPUT=$("${PYENV_PYTHON}" --version)
   VENV_PY_VERSION_OUTPUT=$(cd "${PKG_DIR}" && "$(pipenv --py)" --version || echo "no venv")
+  VENV_DIR="${PKG_DIR}/.venv"
   if [[ "${PYENV_PY_VERSION_OUTPUT}" == "${VENV_PY_VERSION_OUTPUT}" ]]; then
     (cd "${PKG_DIR}" && PIPENV_VENV_IN_PROJECT=1 PIPENV_IGNORE_VIRTUALENVS=1 pipenv sync --dev)
   else
-    rm -rf "${PKG_DIR}/.venv"
-    (cd "${PKG_DIR}" && PIPENV_VENV_IN_PROJECT=1 PIPENV_IGNORE_VIRTUALENVS=1 pipenv sync --dev --python "${PYENV_PYTHON}")
+    if [[ -d ${VENV_DIR} ]]; then
+      echo "Removing ${VENV_DIR} due to python version change ${VENV_PY_VERSION_OUTPUT} -> ${PYENV_PY_VERSION_OUTPUT}"
+      rm -rf "${VENV_DIR}"
+    fi
+    (cd "${PKG_DIR}" && PIPENV_VENV_IN_PROJECT=1 PIPENV_IGNORE_VIRTUALENVS=1 pipenv install --dev --python "${PYENV_PYTHON}")
   fi
 done
