@@ -54,7 +54,7 @@ echo "${GIT_PATHS}" | grep "\(^\|/\)yarn.lock$" | while read -r LOCK_PATH; do
     METEOR_NODE=$(cd "${PKG_DIR}" && meteor node -e "process.stdout.write(process.execPath)")
     PATH=$(dirname "${METEOR_NODE}"):$PATH yarn install --cwd "${PKG_DIR}" "${YARN_INSTALL_ARGS[@]}"
   else
-    yarn install --cwd "${PKG_DIR}" "${YARN_INSTALL_ARGS[@]}"
+    yarn install --cwd "${PKG_DIR}" "${YARN_INSTALL_ARGS[@]}" || true
   fi
 done
 
@@ -81,12 +81,12 @@ echo "${GIT_PATHS}" | grep "\(^\|/\)Pipfile.lock$" | while read -r LOCK_PATH; do
   VENV_PY_VERSION_OUTPUT=$(cd "${PKG_DIR}" && "$(pipenv --py)" --version || echo "no venv")
   VENV_DIR="${PKG_DIR}/.venv"
   if [[ "${PYENV_PY_VERSION_OUTPUT}" == "${VENV_PY_VERSION_OUTPUT}" ]]; then
-    (cd "${PKG_DIR}" && PIPENV_VENV_IN_PROJECT=1 PIPENV_IGNORE_VIRTUALENVS=1 pipenv sync --dev)
+    (cd "${PKG_DIR}" && (PIPENV_VENV_IN_PROJECT=1 PIPENV_IGNORE_VIRTUALENVS=1 pipenv sync --dev || true))
   else
     if [[ -d ${VENV_DIR} ]]; then
       echo "Removing ${VENV_DIR} due to python version change ${VENV_PY_VERSION_OUTPUT} -> ${PYENV_PY_VERSION_OUTPUT}"
       rm -rf "${VENV_DIR}"
     fi
-    (cd "${PKG_DIR}" && PIPENV_VENV_IN_PROJECT=1 PIPENV_IGNORE_VIRTUALENVS=1 pipenv install --dev --python "${PYENV_PYTHON}")
+    (cd "${PKG_DIR}" && (PIPENV_VENV_IN_PROJECT=1 PIPENV_IGNORE_VIRTUALENVS=1 pipenv install --dev --python "${PYENV_PYTHON}" || true))
   fi
 done
