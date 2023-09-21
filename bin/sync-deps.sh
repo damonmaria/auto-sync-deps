@@ -87,6 +87,6 @@ echo "${GIT_PATHS}" | grep "\(^\|/\)Pipfile.lock$" | while read -r LOCK_PATH; do
       echo "Removing ${VENV_DIR} due to python version change ${VENV_PY_VERSION_OUTPUT} -> ${PYENV_PY_VERSION_OUTPUT}"
       rm -rf "${VENV_DIR}"
     fi
-    (cd "${PKG_DIR}" && (PIPENV_VENV_IN_PROJECT=1 PIPENV_IGNORE_VIRTUALENVS=1 pipenv install --dev --python "${PYENV_PYTHON}" || true))
+    (cd "${PKG_DIR}" && (PIPENV_VENV_IN_PROJECT=1 PIPENV_IGNORE_VIRTUALENVS=1 pipenv install --dev --deploy --python "${PYENV_PYTHON}" || true))
   fi
 done
