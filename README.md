@@ -40,3 +40,9 @@ You can also force a manual update of all package trees with `yarn sync-deps`
 
 - Make it work with npm's `package-lock.json` (could know to use `yarn`
   or `npm` based off `npm_config_user_agent` env var)
+
+## Development
+
+### Release
+
+`yarn publish --major` or `yarn publish --minor` or `yarn publish --patch` depending on the change 
