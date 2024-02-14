@@ -74,9 +74,13 @@ echo "${GIT_PATHS}" | grep "\(^\|/\)Pipfile.lock$" | while read -r LOCK_PATH; do
   fi
   PIPFILE_PATH=${LOCK_PATH//Pipfile.lock/Pipfile}
   PY_SHORT_VERSION=$(grep python_version "${PIPFILE_PATH}" | grep -o "[0-9.]\+")
-  PY_LATEST_VERSION=$(pyenv latest -k "${PY_SHORT_VERSION}")
-  pyenv install --skip-existing "${PY_LATEST_VERSION}"
-  PYENV_PYTHON="$(pyenv prefix "${PY_LATEST_VERSION}")/bin/python"
+  if [[ -z "${SKIP_PYENV_INSTALL}" ]]; then
+    PY_LATEST_VERSION=$(pyenv latest -k "${PY_SHORT_VERSION}")
+    pyenv install --skip-existing "${PY_LATEST_VERSION}"
+    PYENV_PYTHON="$(pyenv prefix "${PY_LATEST_VERSION}")/bin/python"
+  else
+    PYENV_PYTHON="$(pyenv prefix "${PY_SHORT_VERSION}")/bin/python"
+  fi
   PYENV_PY_VERSION_OUTPUT=$("${PYENV_PYTHON}" --version)
   VENV_PY_VERSION_OUTPUT=$(cd "${PKG_DIR}" && "$(pipenv --py)" --version || echo "no venv")
   VENV_DIR="${PKG_DIR}/.venv"
