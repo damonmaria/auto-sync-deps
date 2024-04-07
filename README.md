@@ -30,9 +30,9 @@ You can also force a manual update of all package trees with `yarn sync-deps`
 
 ## What this handles
 
-- Multiple `package.json` and `Pipfile` package trees (but only install this package
+- Multiple `package.json`, `Pipenv`, and `Poetry` package trees (but only install this package
   in the root one)
-- Form the git hooks `yarn` and `pipenv` is only run when that particular lock file has changed
+- Form the git hooks the installation is only run when that particular lock file has changed
 - Install the latest version of the python specified in the Pipfile using `pyenv`
 - In a Meteor project use the Meteor version of node to ensure binary compatibility of compiled modules
 
