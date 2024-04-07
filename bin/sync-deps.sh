@@ -58,6 +58,23 @@ echo "${GIT_PATHS}" | grep "\(^\|/\)yarn.lock$" | while read -r LOCK_PATH; do
   fi
 done
 
+echo "${GIT_PATHS}" | grep "\(^\|/\)poetry.lock$" | while read -r LOCK_PATH; do
+  if [[ ! -f "${LOCK_PATH}" ]]; then
+    continue
+  fi
+  PKG_DIR=$(dirname "${LOCK_PATH}")
+  if [[ ${SELECTIVE_UPDATE} ]]; then
+    echo "Updating poetry dependencies due to modified ${LOCK_PATH}"
+  else
+    if [[ ${PKG_DIR} == "." ]]; then
+      echo "Installing root poetry packages"
+    else
+      echo "Installing ${PKG_DIR} poetry packages"
+    fi
+  fi
+  POETRY_VIRTUALENVS_IN_PROJECT=true poetry install -C "${PKG_DIR}" --sync --compile --no-interaction
+done
+
 echo "${GIT_PATHS}" | grep "\(^\|/\)Pipfile.lock$" | while read -r LOCK_PATH; do
   if [[ ! -f "${LOCK_PATH}" ]]; then
     continue
