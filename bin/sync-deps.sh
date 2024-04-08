@@ -72,7 +72,11 @@ echo "${GIT_PATHS}" | grep "\(^\|/\)poetry.lock$" | while read -r LOCK_PATH; do
       echo "Installing ${PKG_DIR} poetry packages"
     fi
   fi
-  POETRY_VIRTUALENVS_IN_PROJECT=true poetry install -C "${PKG_DIR}" --sync --compile --no-interaction
+  PYPROJECT_PATH=${LOCK_PATH//poetry.lock/pyproject.toml}
+  PY_SHORT_VERSION=$(grep "^python\s*=\s*[\"'][~^>=]*\d\.\d\+.*[\"']\s*$" "${PYPROJECT_PATH}" | grep -o "\d\.\d\+")
+  pyenv install --skip-existing "${PY_SHORT_VERSION}"
+  POETRY_VIRTUALENVS_PREFER_ACTIVE_PYTHON=true POETRY_VIRTUALENVS_IN_PROJECT=true PATH=$(pyenv prefix "${PY_SHORT_VERSION}")/bin:${PATH} \
+    poetry install -C "${PKG_DIR}" --sync --compile --no-interaction
 done
 
 echo "${GIT_PATHS}" | grep "\(^\|/\)Pipfile.lock$" | while read -r LOCK_PATH; do
