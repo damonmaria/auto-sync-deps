@@ -9,6 +9,9 @@ Automatically keep your yarn and pipenv dependencies in sync with git changes.
 2. `yarn add --dev auto-sync-deps`
 3. Edit root `package.json` and add the following to the top-level:
    ```json
+   {
+     "name": "...",
+     "...": "...",
      "husky": {
        "hooks": {
          "post-checkout": "yarn sync-deps",
@@ -16,6 +19,7 @@ Automatically keep your yarn and pipenv dependencies in sync with git changes.
          "post-rewrite": "yarn sync-deps"
        }
      }
+   }
    ```
 4. To manage python Pipfile's both `pipenv` and `pyenv` need to be installed
 
