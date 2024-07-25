@@ -1,4 +1,5 @@
 .idea/markdown-navigator*
 .idea/workspace.xml
+.idea/aws.xml
 node_modules
 yarn-error.log
