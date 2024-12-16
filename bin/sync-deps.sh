@@ -4,7 +4,9 @@ set -e
 
 YARN_INSTALL_ARGS=(--frozen-lockfile --non-interactive --silent --ignore-engines)
 
-cd "$(git rev-parse --show-toplevel)" # Run everything from the root of the git tree to match what we store in GIT_PATHS
+ROOT_DIR=$(git rev-parse --show-toplevel)
+
+cd "${ROOT_DIR}" # Run everything from the root of the git tree to match what we store in GIT_PATHS
 
 if [[ ${HUSKY_GIT_PARAMS+foo} ]]; then  # https://stackoverflow.com/questions/3601515/how-to-check-if-a-variable-is-set-in-bash
   # HUSKY_GIT_PARAMS exists therefore called by husky git hook
@@ -75,8 +77,10 @@ echo "${GIT_PATHS}" | grep "\(^\|/\)poetry.lock$" | while read -r LOCK_PATH; do
   PYPROJECT_PATH=${LOCK_PATH//poetry.lock/pyproject.toml}
   PY_SHORT_VERSION=$(grep -E "^python\s*=\s*[\"'][~^>=]*[0-9]\.[0-9]+.*[\"']\s*$" "${PYPROJECT_PATH}" | grep -E -o "[0-9]\.[0-9]+")
   pyenv install --skip-existing "${PY_SHORT_VERSION}"
+  cd "${PKG_DIR}"  # Otherwise scripts end up with the wrong hash bang path
   (POETRY_VIRTUALENVS_PREFER_ACTIVE_PYTHON=true POETRY_VIRTUALENVS_IN_PROJECT=true PATH=$(pyenv prefix "${PY_SHORT_VERSION}")/bin:${PATH} \
-    poetry install -C "${PKG_DIR}" --sync --compile --no-interaction || true)
+    poetry install --sync --compile --no-interaction || true)
+  cd "${ROOT_DIR}"
 done
 
 echo "${GIT_PATHS}" | grep "\(^\|/\)Pipfile.lock$" | while read -r LOCK_PATH; do
