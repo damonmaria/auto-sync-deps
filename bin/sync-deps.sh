@@ -77,10 +77,8 @@ echo "${GIT_PATHS}" | grep "\(^\|/\)poetry.lock$" | while read -r LOCK_PATH; do
   PYPROJECT_PATH=${LOCK_PATH//poetry.lock/pyproject.toml}
   PY_SHORT_VERSION=$(grep -E "^python\s*=\s*[\"'][~^>=]*[0-9]\.[0-9]+.*[\"']\s*$" "${PYPROJECT_PATH}" | grep -E -o "[0-9]\.[0-9]+")
   pyenv install --skip-existing "${PY_SHORT_VERSION}"
-  cd "${PKG_DIR}"  # Otherwise scripts end up with the wrong hash bang path
   (POETRY_VIRTUALENVS_PREFER_ACTIVE_PYTHON=true POETRY_VIRTUALENVS_IN_PROJECT=true PATH=$(pyenv prefix "${PY_SHORT_VERSION}")/bin:${PATH} \
-    poetry install --sync --compile --no-interaction || true)
-  cd "${ROOT_DIR}"
+    poetry install -C "${PKG_DIR}" --sync --compile --no-interaction || true)
 done
 
 echo "${GIT_PATHS}" | grep "\(^\|/\)Pipfile.lock$" | while read -r LOCK_PATH; do
