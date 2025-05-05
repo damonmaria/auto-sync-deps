@@ -60,6 +60,23 @@ echo "${GIT_PATHS}" | grep "\(^\|/\)yarn.lock$" | while read -r LOCK_PATH; do
   fi
 done
 
+echo "${GIT_PATHS}" | grep "\(^\|/\)uv.lock$" | while read -r LOCK_PATH; do
+  if [[ ! -f "${LOCK_PATH}" ]]; then
+    continue
+  fi
+  PKG_DIR=$(dirname "${LOCK_PATH}")
+  if [[ ${SELECTIVE_UPDATE} ]]; then
+    echo "Updating poetry dependencies due to modified ${LOCK_PATH}"
+  else
+    if [[ ${PKG_DIR} == "." ]]; then
+      echo "Installing root python packages"
+    else
+      echo "Installing ${PKG_DIR} python packages"
+    fi
+  fi
+  uv sync --all-packages --directory "${PKG_DIR}"
+done
+
 echo "${GIT_PATHS}" | grep "\(^\|/\)poetry.lock$" | while read -r LOCK_PATH; do
   if [[ ! -f "${LOCK_PATH}" ]]; then
     continue

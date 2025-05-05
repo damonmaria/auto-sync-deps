@@ -25,7 +25,7 @@ Automatically keep your yarn and pipenv dependencies in sync with git changes.
 
 ## What it does
 
-When a change to a package tree (as in a change to a `yarn.lock` or `Pipfile.lock`)
+When a change to a package tree (as in a change to a `yarn.lock`, `uv.lock`, `poetry.lock`, or `Pipfile.lock`)
 is pulled, merged, rebased, or checked out then update that package tree.
 No more wondering why things aren't working because someone has
 committed a package change, but you still have an older version installed.
