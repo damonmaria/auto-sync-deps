@@ -51,13 +51,7 @@ echo "${GIT_PATHS}" | grep "\(^\|/\)yarn.lock$" | while read -r LOCK_PATH; do
       echo "Installing ${PKG_DIR} yarn packages"
     fi
   fi
-  if [[ -e "${PKG_DIR}/.meteor" ]]; then
-    # Due to binary compilation differences, meteor projects need to use its exact node version
-    METEOR_NODE=$(cd "${PKG_DIR}" && meteor node -e "process.stdout.write(process.execPath)")
-    PATH=$(dirname "${METEOR_NODE}"):$PATH yarn install --cwd "${PKG_DIR}" "${YARN_INSTALL_ARGS[@]}"
-  else
-    yarn install --cwd "${PKG_DIR}" "${YARN_INSTALL_ARGS[@]}" || true
-  fi
+  yarn install --cwd "${PKG_DIR}" "${YARN_INSTALL_ARGS[@]}" || true
 done
 
 echo "${GIT_PATHS}" | grep "\(^\|/\)uv.lock$" | while read -r LOCK_PATH; do
