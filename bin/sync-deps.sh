@@ -2,8 +2,6 @@
 
 set -e
 
-YARN_INSTALL_ARGS=(--frozen-lockfile --non-interactive --silent --ignore-engines)
-
 ROOT_DIR=$(git rev-parse --show-toplevel)
 
 cd "${ROOT_DIR}" # Run everything from the root of the git tree to match what we store in GIT_PATHS
@@ -37,6 +35,23 @@ else
   GIT_PATHS=$(git ls-tree --full-tree -r --name-only HEAD)
 fi
 
+echo "${GIT_PATHS}" | grep "\(^\|/\)pnpm-lock.yaml$" | while read -r LOCK_PATH; do
+  if [[ ! -f "${LOCK_PATH}" ]]; then
+    continue
+  fi
+  PKG_DIR=$(dirname "${LOCK_PATH}")
+  if [[ ${SELECTIVE_UPDATE} ]]; then
+    echo "Updating pnpm dependencies due to modified ${LOCK_PATH}"
+  else
+    if [[ ${PKG_DIR} == "." ]]; then
+      echo "Installing root pnpm packages"
+    else
+      echo "Installing ${PKG_DIR} pnpm packages"
+    fi
+  fi
+  pnpm install --dir "${PKG_DIR}" --frozen-lockfile --prefer-offline || true
+done
+
 echo "${GIT_PATHS}" | grep "\(^\|/\)yarn.lock$" | while read -r LOCK_PATH; do
   if [[ ! -f "${LOCK_PATH}" ]]; then
     continue
@@ -51,7 +66,7 @@ echo "${GIT_PATHS}" | grep "\(^\|/\)yarn.lock$" | while read -r LOCK_PATH; do
       echo "Installing ${PKG_DIR} yarn packages"
     fi
   fi
-  yarn install --cwd "${PKG_DIR}" "${YARN_INSTALL_ARGS[@]}" || true
+  yarn install --cwd "${PKG_DIR}" --frozen-lockfile --non-interactive --silent --ignore-engines || true
 done
 
 echo "${GIT_PATHS}" | grep "\(^\|/\)uv.lock$" | while read -r LOCK_PATH; do
