@@ -26,4 +26,4 @@ You can also force a manual update of all package trees with `npx sync-deps`
 
 ### Release
 
-`yarn publish --major` or `yarn publish --minor` or `yarn publish --patch` depending on the change 
+`npm publish` 
